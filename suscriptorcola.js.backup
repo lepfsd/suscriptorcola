@@ -1,0 +1,254 @@
+const Pulsar = require('pulsar-client');
+const fs = require('fs');
+const psaux = require('psaux');
+var mysql = require('mysql');
+  const process = require('process');
+var Url = require('url-parse');
+const filepath=   '/functions/colas/files/';
+//  https://mldatasets.s3.fr-par.scw.cloud/navegacion_26423_
+//  aws s3 mv *.txt s3://mldatasets/
+
+ 
+console.log('mysql-pre');
+var con = mysql.createConnection({
+  host: "51.15.95.84",
+  user: "dataset",
+  password: "Aquinoentras22@",
+	database: "dmp"
+});
+
+con.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected!");
+});
+
+
+ async function crearfichero (consumer, nlineas) {
+     try {
+       var date1 = new Date();
+  
+      var filename = 'navegacion_'+process.pid+'_' ;  
+        
+ 
+/**
+{ v: 8,
+  dmpid:
+   'ODkuMTA3LjE4MC43NXw3MTkxNGJhNTIzYmRhMTA1ZTA2NjJlZDI2ZTEwZTRmNA%3D%3D',
+  recordbins:
+   { key:
+      { ns: 'dmp',
+        set: 'spain',
+        key:
+         'ODkuMTA3LjE4MC43NXw3MTkxNGJhNTIzYmRhMTA1ZTA2NjJlZDI2ZTEwZTRmNA%3D%3D',
+        digest: [Object] },
+     bins:
+      { lastupdated: null,
+        uuid: null,
+        segszeo: [Object],
+        seg_ltm: 12,
+        cbit: 5 },
+     ttl: -1,
+     gen: 32 },
+  cookies: {},
+  title:
+   'Tesla descarta España y construirá su gigafactoría europea en Alemania',
+  documentreferal:
+   'https://us10.admin.mailchimp.com/campaigns/preview-content-html?id=131689',
+  img:
+   'https://www.vozpopuli.com/2019/11/18/altavoz/automocion/CEO-Tesla-Elon-Musk-Alemania_1301579898_14043509_626x472.jpg',
+  referal:
+   'https://www.vozpopuli.com/economia-y-finanzas/tesla-espana-fabrica-baterias-alemania_0_1301570812.html',
+  params: {},
+  originalUrl:
+   '/?uuid=ODkuMTA3LjE4MC43NXw3MTkxNGJhNTIzYmRhMTA1ZTA2NjJlZDI2ZTEwZTRmNA%3D%3D',
+  pais: 'ES',
+  citycode: 'MD',
+  city: 'Madrid',
+  continente: 'EU',
+  UA:
+   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36',
+  asn: '8220',
+  asnisp: 'COLT Technology Services Group Limited',
+  asnorg: 'COLT Technology Services Group Limited',
+  realip: '212.0.98.50',
+  clearbit:
+   '{"domain":"elespanol.com","company":{"id":"cedf1b7e-bb55-40b9-91ac-782017fab7b8","name":"EL ESPAÑOL","legalName":null,"domain":"elespanol.com","domainAliases":["cronicaglobal.com","quincemil.com","navarra.com","elbernabeu.com","vandal.com","canariasenred.com","vandal.net","bluper.es","diariodeavisos.com","elandroidelibre.com"],"site":{"phoneNumbers":[],"emailAddresses":["lector@elespanol.com","lopd@elespanol.com","suscriptor@elespanol.com","accionista@elespanol.com","info@quincemil.com"]},"category":{"sector":"Consumer Discretionary","industryGroup":"Media","industry":"Media","subIndustry":"Media","sicCode":null,"naicsCode":null},"tags":["Media"],"description":"Últimas noticias y toda la actualidad en el nuevo periódico digital de Pedro J. Ramírez.","foundedYear":2015,"location":"28036 Madrid, Spain","timeZone":"Europe/Madrid","utcOffset":1,"geo":{"streetNumber":null,"streetName":null,"subPremise":null,"city":"Madrid","postalCode":"28036","state":"Community of Madrid","stateCode":null,"country":"Spain","countryCode":"ES","lat":40.4617817,"lng":-3.685144},"logo":"https://logo.clearbit.com/elespanol.com","facebook":{"handle":"elespanol2015","likes":346644},"linkedin":{"handle":"company/el-espa%C3%B1ol"},"twitter":{"handle":"elespanolcom","id":"2905232597","bio":"Seleccionamos las mejores historias. Síguenos también en @podium_ee, @cultura_ee, @ciencia_ee, @jaleos_ee, @empresas_ee y @hola_elespanol","followers":367430,"following":747,"location":"Madrid","site":"https://t.co/afj5IYKs7n","avatar":"https://pbs.twimg.com/profile_images/1185677620341542913/EsDm86IO_normal.jpg"},"crunchbase":{"handle":null},"emailProvider":false,"type":"private","ticker":null,"identifiers":{"usEIN":null},"phone":null,"metrics":{"alexaUsRank":null,"alexaGlobalRank":1749,"employees":153,"employeesRange":"51-250","marketCap":null,"raised":null,"annualRevenue":null,"estimatedAnnualRevenue":"$10M-$50M","fiscalYearEnd":null},"indexedAt":"2019-11-10T03:36:50.470Z","tech":["google_apps","aws_route_53","nginx","mandrill","ios","google_tag_manager","google_maps","facebook_advertiser","google_analytics","facebook_connect"],"parent":{"domain":null},"ultimate_parent":{"domain":null}},"geoIP":{"city":"Madrid","state":"Madrid","stateCode":"MD"}}' }
+   
+  
+   { v:8,
+					dmpid: dmpid, recordbins: record, cookies: cookies, 
+					 title: (bodyjson.t || '-' ), dominio: dominio,
+					 documentreferal:   (bodyjson.dr || '-' ),
+					 img:   (bodyjson.img || '-' ),
+					 referal:  context.request.header('referer') ,
+					 params: context.request.params,   originalUrl: context.request.originalUrl,  
+					 pais: context.request.header('x-geoip-country'), 	 citycode: context.request.header('x-geoip-regioncode'), city: context.request.header('x-geoip-city'), 
+					continente: context.request.header('x-geoip-continent'), UA: context.request.header('User-Agent'),
+					 asn: context.request.header('x-geoip-asn'), asnisp: context.request.header('x-geoip-asnisp'), asnorg: context.request.header('x-geoip-asnorg'),
+					 realip:  context.request.header('x-real-ip'),
+						clearbit: datoscbit 
+					}       
+  **/
+ 
+let i = 1;
+    for ( i = 0; i < nlineas; i += 1) {
+   // while (1) { i++;
+
+const separador='   '        
+    const msg = await consumer.receive();
+         let dd =  msg.getData().toString();	
+		 
+         let aa=JSON.parse(dd);
+	 
+      let fila=''
+    //  console.log('aaa' ,aa)
+      console.log('*****************')
+//      console.log(aa.recordbins)
+        let pageviewurl = await new Url(aa.pageurl);
+			 pageviewurl.seccion=pageviewurl.pathname.split('/');
+			 pageviewurl.urlreal=pageviewurl.host+ pageviewurl.pathname ;
+		let pageseccion =pageviewurl.seccion[1] || '/';
+	//	console.log(pageviewurl);
+//redisclient.HINCRBY(["conteo:"+date1.getFullYear()+date1.getMonth()+date1.getDate()+date1.getHours(), "vozpopuli:hashtest 2", 1], redis.print);
+//redisclient.HINCRBY(["conteo:"+date1.getFullYear()+date1.getMonth()+date1.getDate()+date1.getHours(), "vozpopuli:hashtest 2", 1], redis.print );
+fila=aa.pageurl + separador + aa.title + separador+aa.documentreferal+separador+ aa.img+ separador+ pageviewurl.host+separador+pageseccion+'categoriacontenido'
+fila=fila+separador+ aa.pais+separador+ aa.citycode+ separador+ aa.city  + separador+ aa.asn+ aa.asnisp +aa.asnorg + separador+aa.UA
+fila=fila+separador+aa.ltm + separador + aa.clearbit
+        fs.appendFileSync(filepath+filename+'.tmp'  , fila+'\n');
+    
+		
+	if (aa.clearbit && aa.clearbit.match(/company/)) {
+		 let clearbit=JSON.parse(aa.clearbit);
+		//&& aa.clearbit.company ) {	   
+	 
+		if (clearbit.geoIP ) { 	 delete clearbit['geoIP'] } 
+		if (clearbit.company && clearbit.company.site ) { 	 delete clearbit['company']['site'] } 
+		if (clearbit.company && clearbit.company.description ) { 	 delete clearbit['company']['description'] } 
+		if (clearbit.company && clearbit.company.timeZone ) { 	 delete clearbit['company']['timeZone'] } 
+		if (clearbit.company && clearbit.company.utcOffset ) { 	 delete clearbit['company']['utcOffset'] } 
+		if (clearbit.company && clearbit.company.utcOffset ) { 	 delete clearbit['company']['utcOffset'] } 
+		if (clearbit.company && clearbit.company.twitter ) { 	 delete clearbit['company']['twitter']['bio'] } 
+	 
+//var sql = `INSERT IGNORE INTO companies (domain, domainmd5,cbid, data) VALUES ('${clearbit.domain}', MD5('${clearbit.domain}'), '${clearbit.company.id}', '${aa.clearbit}')`;
+var sql = `INSERT INTO companies (domain, domainmd5,cbid, hits, ip, cbkeys, data) VALUES ('${clearbit.domain}', MD5('${clearbit.domain}'), '${clearbit.company.id}',1, '${aa.realip}', '${JSON.stringify(Object.assign( Object.keys(clearbit), Object.keys(clearbit.company)) )}',
+JSON_QUOTE("${con.escape(JSON.stringify(clearbit))}")  ) ON DUPLICATE KEY UPDATE hits=hits+1 `; 	
+await  con.query(sql, function (err, result) {
+    if (err) { 
+			
+		console.log("sql error", aa);
+		console.log(sql);
+		throw err;
+	} });
+		
+	}
+		var ltm='{}'
+		if ( aa.ltm && aa.ltm.match(/id/)) {
+			ltm=JSON.parse(aa.ltm);
+	 		ltm=JSON.stringify(  ltm.Audience);
+		}
+		console.log('prepag', pageviewurl, pageviewurl.urlreal);
+var  sqlurl = `INSERT INTO urls (urlmd5,dominiomd5,  hits, url, title, imagen, seccion) VALUES ( MD5(?) , MD5('${pageviewurl.host}') ,  1, ? , ?, ?, ?  ) ON DUPLICATE KEY UPDATE hits=hits+1 `; 			
+  await con.query(sqlurl, [pageviewurl.urlreal.toString(), pageviewurl.urlreal.toString(), aa.title,  aa.imagen , pageseccion ], function (err, result) {
+    if (err) { 
+		console.log(sqlurl,pageviewurl);
+		console.log("sql error urls", err, aa);
+		throw err;
+	} });
+		
+ 			
+  await con.query(`INSERT INTO users (uuid, ltm, hits, pais, ispcode, ispstring, ispdomain, ip ) VALUES ('${aa.dmpid}', ?, 1, ?,'${aa.asn}', ? , ?, '${aa.realip}' ) ON DUPLICATE KEY UPDATE hits=hits+1 `, [ltm,aa.pais, aa.asnisp, aa.asnorg], function (err, result) {
+    if (err) { 
+		 
+		console.log("sql error users", err, aa);
+		throw err;
+	} });
+//var  sqldomains = `INSERT INTO urls_users (uuid, urlmd5, dominiomd5, dominioseccionmd5) VALUES ('${aa.dmpid}',  MD5('${pageviewurl.urlreal}'),MD5('${pageviewurl.host}')  ,MD5('${pageviewurl.host+pageseccion}')   ) ON DUPLICATE KEY UPDATE  hits=hits+1 ;`; 
+  await con.query(`INSERT INTO urls_users (uuid, urlmd5, dominiomd5, dominioseccionmd5, hits) VALUES ('${aa.dmpid}',  MD5('${pageviewurl.urlreal}'),MD5('${pageviewurl.host}')  ,MD5('${pageviewurl.host+pageseccion}') , 1  ) ON DUPLICATE KEY UPDATE  hits=hits+1 ;`, function (err, result) {
+    if (err) { 	 
+		console.log("sql error urls_users", err);
+		throw err;
+	} });
+await   con.query( ` INSERT INTO dominio_users (uuid,   dominiomd5, hits ) VALUES ('${aa.dmpid}',  MD5('${pageviewurl.host}') , 1) ON DUPLICATE KEY UPDATE hits=hits+1 ;`, function (err, result) {
+    if (err) { 		 
+		console.log("sql error dominio_users", err);
+		throw err;
+	} });
+
+		
+		
+		
+         if ((i%20)==0) {
+                 console.log('bb ', i );  
+		
+               console.log('pageviewurl', pageviewurl );
+               console.log('pv' ,aa );
+            // if (i>5000) { break; }
+         }
+         if ((i%100)==0 ) {
+              
+             var stats = fs.statSync(filepath+filename+'.tmp'   )              
+          if ( stats.size > 10400000.0) { break; }
+    }
+          await  consumer.acknowledge(msg);
+  }
+ 
+     fs.renameSync(filepath+filename+'.tmp', filepath+filename+'--'+i+'.txt'  , (err) => {
+  if (err) throw err;
+ // console.log('Rename complete!');
+ return process.exit(22);
+		 
+});
+   
+        console.log( 'salida');   
+  return true;  
+      }catch(e) {console.log(e)    }
+      }
+(async () => {
+    
+	 	console.log('nprocesospre', 0 ) 
+  nprocesos=await  psaux().then(list => {  
+        let chrome = list.query({command: '~suscriptorcola.js'});
+        if (chrome) {
+            console.log('Chrome process found!', chrome.length);
+        }
+      return   chrome.length;
+	  //resolve( chrome.length);
+    }); 
+ 
+	console.log('nprocesos', nprocesos ) 
+if (nprocesos>4) {  return process.exit(22); }	
+	
+     const auth = new Pulsar.AuthenticationToken({
+     token: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ3Mjk1ODUzNDQsImlhdCI6MTU3MzgyNTM0NCwiaXNzIjoiY29tLm92aC5pby5zdHJlYW0uU2FuY3R1YXJ5IiwibmJmIjoxNTczODI1MzQ0LCJzdWIiOiJmZTZkY2EwYmI1OTI0MmY5OWRiMTVlNGFmZWRlMTllNS5icm93c2luZy45MWY5ODZjMi1iOGYwLTQzM2EtYmJmZS1mZGMzNDE5ODk3MzUifQ.adggkQE9jVNaBSIyIx389tR8kwgWQkWDQwRKp4I1lk8FmGQ2-MZdA90c9haK_OiFiWxGyvjrOP0_Qq0DuCVKGLD4YNWaNjxc_pe7uPp4-tbk3G944yFBXch9ZWzNCJSLlrZgDABgRZDqr607e0qN-UZjlOm06V0d8hmVJc3i0Pa_Iz6yjU58XszMfxSG5J5rCbH8V4B-NSoXgyO6FerCMuBybNigAJwZHPglemFZ27htksdu6gygJXOmxys1kVJaw4e1b3CT8bThcw2Gr0Z_POQMvmHByLD9OpChOrGUhs6JqjJ6YFxwPAvnrSbShad9zhJq53WabE4r4yAMEmqXxw'
+     });
+    
+    console.log('token', auth );
+    console.log(  auth);
+  const client = await new Pulsar.Client({
+    serviceUrl: 'pulsar+ssl://gra.stream.io.ovh.net:6650',
+      authentication: auth,
+          operationTimeoutSeconds: 30
+  })
+
+    // Create a producer
+ //   console.log('client', client); 
+  //  console.log( client); 
+  
+      
+  // Create a consumer
+  const consumer = await client.subscribe({
+     topic: 'persistent://fe6dca0bb59242f99db15e4afede19e5/browsing/browsing', 
+    subscription: 'sub1',
+    subscriptionType: 'Shared',
+  });
+    //console.log( 'pre crear'); 
+  // Receive messages
+    while(await crearfichero(consumer, 50000)){}
+ //  const creafiles =   await crearfichero(consumer, 15);
+   console.log( 'post crear'); 
+    
+  await consumer.close();
+})().catch(e => {
+     console.log('error');
+     console.log(e);
+  });
